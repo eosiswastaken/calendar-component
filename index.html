@@ -29,7 +29,10 @@
                 <template x-for="(day,index) in getDays()">
                     <div class="border-solid border-2 border-slate-950 m-1 mx-8" x-data="{ open: false }"  x-on:click="open  =! open">
                         <div class="flex justify-between mx-4">
-                            <p x-text="getDay(index,day.number) + ' ' + day.number"></p>
+                            <div class="flex items-baseline">
+                                <p x-text="getDayInfo(index)[0] + ' ' + getDayInfo(index)[1]"></p>
+                                <p x-text="getDayInfo(index)[2]" class="text-gray-500 ml-1.5 text-sm"></p>
+                            </div>
                             <button>Dispo</button>
                         </div>
                         <template x-for="event in getDayPlanning(index)">
@@ -38,7 +41,9 @@
                                     <p x-text="new Date(event.start*1000).getHours() + 'h -' + new Date(event.end*1000).getHours() + 'h'" + ">y</p>
                                     <p>Indisponible</p>
                                 </div>
+                                
                             </div>
+                            <p x-text="getDayInfo(index)[2]" class="text-gray-500 ml-1.5 text-sm"></p>
                         </div>
                         </template>
                     </div>
@@ -84,25 +89,13 @@
                 return this.JSON.weeks[this.currentWeek-1].days[day].events
         },
 
-        getDay(dayIndex,day){
-                if (this.currentWeek == 1){
-                    startFrom = 0
-                    dayNumber = (dayIndex * this.currentWeek) + 1
-                } else {
-                    startFrom = (this.currentWeek * 7) - 6
-                    dayNumber = parseInt(startFrom) + parseInt(dayIndex)
-                }
+            getDayInfo(dayIndex){
+                let timestamp = this.JSON.weeks[this.currentWeek - 1].days[dayIndex].timestamp;
+                let date = new Date(parseInt(timestamp));
+                const dayNames = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+                const monthNames = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Novembre","Octobre","Décembre"]
 
-                let month = new Date(1000 * 60 * 60 * 24 * 7 * this.currentWeek).getMonth()
-
-                var date = new Date(dayNumber * 24 * 60 * 60 * 1000);
-                var test = new Date(2024,month,parseInt(day))
-                const dayNames = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"]
-                console.log(month + "month")
-                console.log(test)
-                console.log(test.getDay())
-                console.log(dayNames[test.getDay()])
-                return dayNames[test.getDay()]
+                return [dayNames[date.getDay()],date.getDate(),monthNames[date.getMonth()]];
 
 
 
